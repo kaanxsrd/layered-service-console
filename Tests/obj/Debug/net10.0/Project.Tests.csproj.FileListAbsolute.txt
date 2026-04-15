@@ -100,3 +100,4 @@
 /Users/vante/RiderProjects/Project/Tests/obj/Debug/net10.0/Project.Tests.genruntimeconfig.cache
 /Users/vante/RiderProjects/Project/Tests/obj/Debug/net10.0/ref/Project.Tests.dll
 /Users/vante/RiderProjects/Project/Tests/obj/Debug/net10.0/Project.Tests.csproj.CoreCompileInputs.cache
+/Users/vante/RiderProjects/Project/Tests/obj/Debug/net10.0/Project.Tests.sourcelink.json

@@ -8,37 +8,24 @@ namespace Project.Services;
 public class WordService
 {
     /// <summary>
-    /// Normalizes input text by handling various line endings and whitespace characters.
-    /// </summary>
-    /// <param name="input">The string to normalize.</param>
-    /// <returns>A normalized version of the input string.</returns>
-    public static string Normalize(string input)
-    {
-        input = input.Replace("\r\n", "\n").Replace('\r', '\n');
-        
-        input = Regex.Replace(input, @"[\u00A0\u1680\u2000-\u200A\u202F\u205F\u3000]", " ");
-
-        input = Regex.Replace(input, @"[\u200B-\u200D\u2028\u2029\uFEFF]", "");
-
-        return input;
-    }
-
-    /// <summary>
     /// Counts occurrences of a specific word in a text.
     /// </summary>
     /// <param name="searchWord">The word to search for.</param>
     /// <param name="text">The text to search within.</param>
-    /// <returns>Number of occurrences found.</returns>
-    public int WordCount(string searchWord, string text)
+    /// <returns>
+    /// <see cref="Result{T}"/> with the count on success, or a failure message if the word was not found.
+    /// </returns>
+    public Result<int> WordCount(string searchWord, string text)
     {
-        if (string.IsNullOrEmpty(searchWord) || string.IsNullOrEmpty(text))
-            return 0;
+        if (string.IsNullOrEmpty(text) || string.IsNullOrEmpty(searchWord))
+            return Result<int>.Failure("Det søgte ord eller teksten må ikke være tom.");
 
-        text       = Normalize(text);
-        searchWord = Normalize(searchWord).Trim();
+        int count = text.ToLower().Split(' ').Count(x => x.Contains(searchWord.ToLower()));
 
-        string pattern = $@"\b{Regex.Escape(searchWord)}\b";
-        return Regex.Matches(text, pattern, RegexOptions.IgnoreCase).Count;
+        if (count == 0)
+            return Result<int>.Failure($"Ordet '{searchWord}' findes ikke i den angivne tekst.");
+
+        return Result<int>.Success(count);
     }
     
     /// <summary>

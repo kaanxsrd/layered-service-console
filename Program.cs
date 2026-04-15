@@ -3,10 +3,10 @@ using Project.Models;
 using Project.Services;
 using Project.UI;
 
-// <summary>
-// Entry point for the application.
-// Initializes services and handles the main application loop.
-// </summary>
+/// <summary>
+/// Entry point for the application.
+/// Initializes services and handles the main application loop.
+/// </summary>
 ServiceRegistry.Register(new ServiceModule
 {
     Id          = "word-count",

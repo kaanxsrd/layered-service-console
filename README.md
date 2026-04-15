@@ -71,3 +71,16 @@ dotnet run
 ### Development Modes
 -   `--dev`: Auto-logs in as Root.
 -   `--user`: Auto-logs in as a standard User.
+
+### Test Modes
+The project uses xUnit for testing. Here's how to run the tests, including with watch mode:
+
+-   `dotnet test Tests/`: Run all tests once
+-   `dotnet watch test --project Tests/`: Run with watch mode (re-runs on file save):
+-   `dotnet test Tests/ --filter "FullyQualifiedName~AuthServiceTests"`: Run a specific test file:
+-   `dotnet test Tests/ --filter "FullyQualifiedName~AuthServiceTests.xMethodName" `: Run a specific test method:
+
+The test files are in `Tests/Services/`:
+- **AuthServiceTests.cs**
+- **ServiceRegistryTests.cs**
+- **WordServiceTests.cs**
