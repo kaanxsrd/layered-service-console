@@ -1,0 +1,15 @@
+/Users/vante/RiderProjects/Project/bin/Debug/net10.0/Project
+/Users/vante/RiderProjects/Project/bin/Debug/net10.0/Project.deps.json
+/Users/vante/RiderProjects/Project/bin/Debug/net10.0/Project.runtimeconfig.json
+/Users/vante/RiderProjects/Project/bin/Debug/net10.0/Project.dll
+/Users/vante/RiderProjects/Project/bin/Debug/net10.0/Project.pdb
+/Users/vante/RiderProjects/Project/obj/Debug/net10.0/Project.GeneratedMSBuildEditorConfig.editorconfig
+/Users/vante/RiderProjects/Project/obj/Debug/net10.0/Project.AssemblyInfoInputs.cache
+/Users/vante/RiderProjects/Project/obj/Debug/net10.0/Project.AssemblyInfo.cs
+/Users/vante/RiderProjects/Project/obj/Debug/net10.0/Project.csproj.CoreCompileInputs.cache
+/Users/vante/RiderProjects/Project/obj/Debug/net10.0/Project.dll
+/Users/vante/RiderProjects/Project/obj/Debug/net10.0/refint/Project.dll
+/Users/vante/RiderProjects/Project/obj/Debug/net10.0/Project.pdb
+/Users/vante/RiderProjects/Project/obj/Debug/net10.0/Project.genruntimeconfig.cache
+/Users/vante/RiderProjects/Project/obj/Debug/net10.0/ref/Project.dll
+/Users/vante/RiderProjects/Project/obj/Debug/net10.0/Project.sourcelink.json
