@@ -13,9 +13,12 @@ public class PensionCalculator
     /// A <see cref="PensionResult"/> with age, years until pension, and an optional
     /// savings warning when fewer than 5 years remain.
     /// </returns>
-    public PensionResult Calculate(DateOnly birthDate)
+    public Result<PensionResult> Calculate(DateOnly birthDate)
     {
         DateOnly today = DateOnly.FromDateTime(DateTime.Today);
+
+        if (birthDate >= today)
+            return Result<PensionResult>.Failure("Fødselsdatoen må ikke være i fremtiden.");
 
         int age = today.Year - birthDate.Year;
         if (birthDate > today.AddYears(-age))
@@ -27,6 +30,6 @@ public class PensionCalculator
             ? "Du skal tjekke din pension opsparing."
             : null;
 
-        return new PensionResult(age, yearsUntilPension, warning);
+        return Result<PensionResult>.Success(new PensionResult(age, yearsUntilPension, warning));
     }
 }

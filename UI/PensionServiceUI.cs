@@ -17,16 +17,24 @@ public static class PensionServiceUI
         ConsoleHelper.WriteHeader("PENSION CALCULATOR");
 
         DateOnly birthDate = ReadBirthDate();
-        PensionResult result = _calculator.Calculate(birthDate);
+        Result<PensionResult> result = _calculator.Calculate(birthDate);
 
         Console.WriteLine();
-        ConsoleHelper.WriteInfo($"Din alder              : {result.Age} år");
-        ConsoleHelper.WriteInfo($"År til pension (alder {PensionCalculator.PensionAge}): {result.YearsUntilPension} år");
 
-        if (result.Warning is not null)
+        if (!result.IsSuccess)
+        {
+            ConsoleHelper.WriteError(result.Error);
+            ConsoleHelper.Pause();
+            return;
+        }
+
+        ConsoleHelper.WriteInfo($"Din alder              : {result.Value.Age} år");
+        ConsoleHelper.WriteInfo($"År til pension (alder {PensionCalculator.PensionAge}): {result.Value.YearsUntilPension} år");
+
+        if (result.Value.Warning is not null)
         {
             Console.WriteLine();
-            ConsoleHelper.WriteWarning(result.Warning);
+            ConsoleHelper.WriteWarning(result.Value.Warning);
         }
 
         Console.WriteLine();
