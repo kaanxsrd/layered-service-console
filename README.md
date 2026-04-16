@@ -1,6 +1,6 @@
 # Project Management System
 
-A modular C# console application designed for user management, authentication, and service registration.
+A modular C# console application for user management, authentication, and service registration. Built with clean architecture principles, featuring secure login, user CRUD operations, and a structured service layer.
 
 ## 📂 Folder Architecture
 
