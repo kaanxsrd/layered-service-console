@@ -17,6 +17,16 @@ ServiceRegistry.Register(new ServiceModule
     Run         = WordServiceUI.Run,
 });
 
+ServiceRegistry.Register(new ServiceModule
+{
+    Id          = "pension-calculator",
+    Name        = "Pension Calculator",
+    Description = "Beregner din alder og antal år til pension",
+    IsEnabled   = true,
+    MinimumRole = Role.User,
+    Run         = PensionServiceUI.Run,
+});
+
 var auth = new AuthService();
 
 if (args.Contains("--dev"))
@@ -38,6 +48,7 @@ else if (args.Contains("--user"))
     Thread.Sleep(400);
     new Dashboard(auth).Show();
 }
+
 else
 {
     while (true)
@@ -46,3 +57,4 @@ else
         new Dashboard(auth).Show();
     }
 }
+

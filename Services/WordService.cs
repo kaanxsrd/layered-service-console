@@ -27,7 +27,7 @@ public class WordService
 
         return Result<int>.Success(count);
     }
-    
+
     /// <summary>
     /// Inspects if a word count is within an acceptable range.
     /// </summary>
@@ -42,5 +42,27 @@ public class WordService
             return false;
 
         return true;
+    }
+
+
+    /// <summary>
+    /// Handles a dynamic parameter, performing different operations based on its type.
+    /// </summary>
+    /// <param name="parameter">The dynamic parameter to handle.</param>
+    /// <returns>The result of the operation.</returns>
+    public dynamic HandleParameter(dynamic parameter)
+    {
+        if (parameter is int intValue || parameter is double doubleValue || parameter is float floatValue)
+        {
+            return parameter + 100;
+        }
+        else if (parameter is string strValue)
+        {
+            return "Følgende tekst modtaget: " + parameter;
+        }
+        else
+        {
+            return false;
+        }
     }
 }

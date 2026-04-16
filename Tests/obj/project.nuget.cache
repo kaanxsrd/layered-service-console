@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "u4kwzXz7MIY=",
+  "dgSpecHash": "nMzhzZXyYgk=",
   "success": true,
-  "projectFilePath": "/Users/vante/RiderProjects/Project/Tests/Project.Tests.csproj",
+  "projectFilePath": "/Users/vante/GitHub/SchoolProject/Tests/Project.Tests.csproj",
   "expectedPackageFiles": [
     "/Users/vante/.nuget/packages/coverlet.collector/6.0.4/coverlet.collector.6.0.4.nupkg.sha512",
     "/Users/vante/.nuget/packages/microsoft.codecoverage/17.14.1/microsoft.codecoverage.17.14.1.nupkg.sha512",

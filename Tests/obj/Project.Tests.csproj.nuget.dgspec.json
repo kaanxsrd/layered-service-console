@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Users/vante/RiderProjects/Project/Tests/Project.Tests.csproj": {}
+    "/Users/vante/GitHub/SchoolProject/Tests/Project.Tests.csproj": {}
   },
   "projects": {
-    "/Users/vante/RiderProjects/Project/Project.csproj": {
+    "/Users/vante/GitHub/SchoolProject/Project.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/vante/RiderProjects/Project/Project.csproj",
+        "projectUniqueName": "/Users/vante/GitHub/SchoolProject/Project.csproj",
         "projectName": "Project",
-        "projectPath": "/Users/vante/RiderProjects/Project/Project.csproj",
+        "projectPath": "/Users/vante/GitHub/SchoolProject/Project.csproj",
         "packagesPath": "/Users/vante/.nuget/packages/",
-        "outputPath": "/Users/vante/RiderProjects/Project/obj/",
+        "outputPath": "/Users/vante/GitHub/SchoolProject/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/vante/.nuget/NuGet/NuGet.Config"
@@ -338,14 +338,14 @@
         }
       }
     },
-    "/Users/vante/RiderProjects/Project/Tests/Project.Tests.csproj": {
+    "/Users/vante/GitHub/SchoolProject/Tests/Project.Tests.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/vante/RiderProjects/Project/Tests/Project.Tests.csproj",
+        "projectUniqueName": "/Users/vante/GitHub/SchoolProject/Tests/Project.Tests.csproj",
         "projectName": "Project.Tests",
-        "projectPath": "/Users/vante/RiderProjects/Project/Tests/Project.Tests.csproj",
+        "projectPath": "/Users/vante/GitHub/SchoolProject/Tests/Project.Tests.csproj",
         "packagesPath": "/Users/vante/.nuget/packages/",
-        "outputPath": "/Users/vante/RiderProjects/Project/Tests/obj/",
+        "outputPath": "/Users/vante/GitHub/SchoolProject/Tests/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/vante/.nuget/NuGet/NuGet.Config"
@@ -361,8 +361,8 @@
           "net10.0": {
             "targetAlias": "net10.0",
             "projectReferences": {
-              "/Users/vante/RiderProjects/Project/Project.csproj": {
-                "projectPath": "/Users/vante/RiderProjects/Project/Project.csproj"
+              "/Users/vante/GitHub/SchoolProject/Project.csproj": {
+                "projectPath": "/Users/vante/GitHub/SchoolProject/Project.csproj"
               }
             }
           }
