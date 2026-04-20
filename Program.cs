@@ -1,60 +1,122 @@
-using Project.Enums;
-using Project.Models;
-using Project.Services;
-using Project.UI;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Project.Application.Abstractions;
+using Project.Application.Dtos.Auth;
+using Project.Application.Services.Auth;
+using Project.Application.Services.Files;
+using Project.Application.Services.Modules;
+using Project.Application.Services.Pension;
+using Project.Application.Services.Text;
+using Project.Infrastructure.Auth;
+using Project.Infrastructure.Configuration;
+using Project.Infrastructure.Persistence;
+using Project.Infrastructure.Security;
+using Project.Infrastructure.Time;
+using Project.Presentation;
+using Project.Presentation.Modules;
+using Project.Presentation.Rendering;
+using Project.Presentation.Screens;
 
-/// <summary>
-/// Entry point for the application.
-/// Initializes services and handles the main application loop.
-/// </summary>
-ServiceRegistry.Register(new ServiceModule
+var services = new ServiceCollection();
+
+services.AddLogging(builder =>
 {
-    Id          = "word-count",
-    Name        = "Word Count",
-    Description = "Counts how many times a word appears in a text",
-    IsEnabled   = true,
-    MinimumRole = Role.User,
-    Run         = WordServiceUI.Run,
+    builder
+        .AddSimpleConsole(options =>
+        {
+            options.SingleLine       = true;
+            options.TimestampFormat  = "HH:mm:ss ";
+            options.IncludeScopes    = false;
+        })
+        .SetMinimumLevel(LogLevel.Warning);
 });
 
-ServiceRegistry.Register(new ServiceModule
-{
-    Id          = "pension-calculator",
-    Name        = "Pension Calculator",
-    Description = "Beregner din alder og antal år til pension",
-    IsEnabled   = true,
-    MinimumRole = Role.User,
-    Run         = PensionServiceUI.Run,
-});
+services.AddSingleton<IConfigurationService>(_ =>
+    new JsonConfigurationService(Path.Combine(AppContext.BaseDirectory, "appsettings.json")));
 
-var auth = new AuthService();
+services.AddSingleton<IClock,          SystemClock>();
+services.AddSingleton<IPasswordHasher, Pbkdf2PasswordHasher>();
+services.AddSingleton<ITokenService,   StubTokenService>();
 
-if (args.Contains("--dev"))
-{
-    auth.Login("root@system.local", "root123");
-    Console.ForegroundColor = ConsoleColor.Yellow;
-    Console.WriteLine("  [DEV] Auto-logged in as root");
-    Console.ResetColor();
-    Thread.Sleep(400);
-    new Dashboard(auth).Show();
-    
-}
-else if (args.Contains("--user"))
-{
-    auth.Login("user@system.local", "user123");
-    Console.ForegroundColor = ConsoleColor.Yellow;
-    Console.WriteLine("  [DEV] Auto-logged in as user");
-    Console.ResetColor();
-    Thread.Sleep(400);
-    new Dashboard(auth).Show();
-}
+// TODO(db): swap InMemoryUserRepository for SqlUserRepository once the database is provisioned
+services.AddSingleton<IUserRepository, InMemoryUserRepository>();
 
-else
+services.AddSingleton<IAuthService,     AuthService>();
+services.AddSingleton<IFileService,     FileService>();
+services.AddSingleton<IServiceRegistry, ServiceRegistry>();
+
+services.AddSingleton<PensionCalculator>();
+services.AddSingleton<WordService>();
+
+services.AddSingleton<PensionServiceUI>();
+services.AddSingleton<WordServiceUI>();
+services.AddSingleton<LoginScreen>();
+services.AddSingleton<Dashboard>();
+services.AddSingleton<ServiceRunnerScreen>();
+services.AddSingleton<ServiceManagementScreen>();
+services.AddSingleton<UserManagementScreen>();
+
+services.AddSingleton<IServiceModule, PensionServiceModule>();
+services.AddSingleton<IServiceModule, WordServiceModule>();
+
+await using var provider = services.BuildServiceProvider();
+
+using var cts = new CancellationTokenSource();
+Console.CancelKeyPress += (_, e) =>
 {
-    while (true)
+    e.Cancel = true;
+    cts.Cancel();
+};
+
+var logger = provider.GetRequiredService<ILogger<Program>>();
+
+try
+{
+    var auth      = provider.GetRequiredService<IAuthService>();
+    var login     = provider.GetRequiredService<LoginScreen>();
+    var dashboard = provider.GetRequiredService<Dashboard>();
+
+    if (args.Contains("--dev"))
     {
-        new LoginScreen(auth).Show();
-        new Dashboard(auth).Show();
+        await AutoLoginAsync(auth, "root@system.local", "root123", "root", cts.Token).ConfigureAwait(false);
+        await dashboard.RunAsync(cts.Token).ConfigureAwait(false);
+        return 0;
     }
+
+    if (args.Contains("--user"))
+    {
+        await AutoLoginAsync(auth, "user@system.local", "user123", "user", cts.Token).ConfigureAwait(false);
+        await dashboard.RunAsync(cts.Token).ConfigureAwait(false);
+        return 0;
+    }
+
+    while (!cts.IsCancellationRequested)
+    {
+        await login.RunAsync(cts.Token).ConfigureAwait(false);
+        await dashboard.RunAsync(cts.Token).ConfigureAwait(false);
+    }
+
+    return 0;
+}
+catch (OperationCanceledException)
+{
+    return 0;
+}
+catch (Exception ex)
+{
+    logger.LogError(ex, "Fatal unhandled exception");
+    ResultRenderer.RenderError(new Project.Application.Common.Error("Fatal", ex.Message));
+    return 1;
 }
 
+static async Task AutoLoginAsync(IAuthService auth, string email, string password, string label, CancellationToken ct)
+{
+    var result = await auth.LoginAsync(new LoginRequest(email, password), ct).ConfigureAwait(false);
+    if (result.IsFailure)
+    {
+        ResultRenderer.RenderError(result.Error!.Value);
+        return;
+    }
+    ConsoleHelper.WriteWarning($"[DEV] Auto-logged in as {label}");
+    await Task.Delay(400, ct).ConfigureAwait(false);
+}
