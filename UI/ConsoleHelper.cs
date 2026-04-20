@@ -1,103 +1,95 @@
-namespace Project.UI;
+using SchoolProject.Enums;
+using SchoolProject.Models;
 
-/// <summary>
-/// Static utility class for common console UI tasks.
-/// </summary>
-public static class ConsoleHelper
+namespace SchoolProject.UI;
+
+internal static class ConsoleHelper
 {
-    private const int PanelWidth = 52;
-
-    /// <summary>
-    /// Writes text in the specified color.
-    /// </summary>
-    /// <param name="text">The string to display.</param>
-    /// <param name="color">The color to use.</param>
-    public static void WriteColored(string text, ConsoleColor color)
+    internal static void Header(string title)
     {
-        Console.ForegroundColor = color;
-        Console.Write(text);
+        string border = new('═', title.Length + 4);
+        Console.WriteLine($"\n╔{border}╗");
+        Console.WriteLine($"║  {title}  ║");
+        Console.WriteLine($"╚{border}╝");
+    }
+
+    internal static void Section(string title)
+    {
+        Console.WriteLine($"\n── {title} {new string('─', Math.Max(0, 52 - title.Length))}");
+    }
+
+    internal static void Error(string msg)
+    {
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine($"\n  ✗ {msg}");
         Console.ResetColor();
     }
 
-    /// <summary>
-    /// Writes a line of text in the specified color.
-    /// </summary>
-    /// <param name="text">The string to display.</param>
-    /// <param name="color">The color to use.</param>
-    public static void WriteLineColored(string text, ConsoleColor color)
+    internal static void Success(string msg)
     {
-        Console.ForegroundColor = color;
-        Console.WriteLine(text);
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine($"\n  ✓ {msg}");
         Console.ResetColor();
     }
 
-    /// <summary>
-    /// Clears the console and writes a centered title inside a box.
-    /// </summary>
-    /// <param name="title">The text to display as a header.</param>
-    public static void WriteHeader(string title)
+    internal static void PrintDtoList(List<EmployeeDTO> list)
     {
-        Console.Clear();
-        string border = new string('═', PanelWidth - 2);
-        string padded = title.PadLeft((PanelWidth - 2 + title.Length) / 2).PadRight(PanelWidth - 2);
-        WriteLineColored($"╔{border}╗", ConsoleColor.Cyan);
-        WriteLineColored($"║{padded}║", ConsoleColor.Cyan);
-        WriteLineColored($"╚{border}╝", ConsoleColor.Cyan);
-        Console.WriteLine();
+        Console.WriteLine($"\n  {"Navn",-28} {"Køn",-5} {"Alder",5}");
+        Console.WriteLine($"  {new string('─', 40)}");
+        foreach (var e in list)
+            Console.WriteLine($"  {$"{e.ForNavn} {e.EfterNavn}",-28} {e.Køn,-5} {e.Age,5}");
+        Console.WriteLine($"  {new string('─', 40)}");
+        Console.WriteLine($"  Total: {list.Count} medarbejdere");
     }
 
-    /// <summary>
-    /// Draws a horizontal gray line as a separator.
-    /// </summary>
-    public static void WriteSeparator() =>
-        WriteLineColored("  " + new string('─', PanelWidth - 4), ConsoleColor.DarkGray);
-
-    /// <summary>Writes a success message in green.</summary>
-    public static void WriteSuccess(string msg) => WriteLineColored("  [OK] " + msg, ConsoleColor.Green);
-    /// <summary>Writes an error message in red.</summary>
-    public static void WriteError(string msg)   => WriteLineColored("  [!!] " + msg, ConsoleColor.Red);
-    /// <summary>Writes a warning message in yellow.</summary>
-    public static void WriteWarning(string msg) => WriteLineColored("  [**] " + msg, ConsoleColor.Yellow);
-    /// <summary>Writes an info message in cyan.</summary>
-    public static void WriteInfo(string msg)    => WriteLineColored("  [>>] " + msg, ConsoleColor.DarkCyan);
-
-    /// <summary>
-    /// Reads user input from the console without echoing characters (shows * instead).
-    /// </summary>
-    /// <returns>The entered password as a plain string.</returns>
-    public static string ReadPassword()
+    internal static void PrintRecordList(List<EmployeeRecord> list)
     {
-        var sb = new System.Text.StringBuilder();
-        ConsoleKeyInfo key;
-
-        while ((key = Console.ReadKey(true)).Key != ConsoleKey.Enter)
+        if (list.Count == 0)
         {
-            if (key.Key == ConsoleKey.Backspace)
-            {
-                if (sb.Length > 0)
-                {
-                    sb.Remove(sb.Length - 1, 1);
-                    Console.Write("\b \b");
-                }
-            }
-            else if (!char.IsControl(key.KeyChar))
-            {
-                sb.Append(key.KeyChar);
-                Console.Write('*');
-            }
+            Console.WriteLine("  (ingen)");
+            return;
+        }
+        Console.WriteLine($"  {"Navn",-28} {"Køn",-5} {"Alder",5}");
+        Console.WriteLine($"  {new string('─', 40)}");
+        foreach (var r in list)
+            Console.WriteLine($"  {$"{r.ForNavn} {r.EfterNavn}",-28} {r.Køn,-5} {r.Alder,5}");
+    }
+
+    internal static EmployeeDTO? ReadEmployeeFromInput()
+    {
+        Console.Write("\n  Fornavn               : ");
+        var forNavn = Console.ReadLine()?.Trim() ?? "";
+
+        Console.Write("  Efternavn             : ");
+        var efterNavn = Console.ReadLine()?.Trim() ?? "";
+
+        Console.Write("  Fødselsdato (dd/MM/yyyy): ");
+        var dateInput = Console.ReadLine()?.Trim() ?? "";
+
+        Console.Write("  Køn (M/F)             : ");
+        var kønInput = Console.ReadLine()?.Trim().ToUpperInvariant() ?? "";
+
+        if (!DateOnly.TryParseExact(dateInput, "dd/MM/yyyy", null,
+                System.Globalization.DateTimeStyles.None, out var date))
+        {
+            Error("Ugyldig datoformat – brug dd/MM/yyyy.");
+            return null;
         }
 
-        Console.WriteLine();
-        return sb.ToString();
-    }
+        if (!Enum.TryParse<Gender>(kønInput, out var gender))
+        {
+            Error("Ugyldigt køn – brug M eller F.");
+            return null;
+        }
 
-    /// <summary>
-    /// Pauses execution and waits for the user to press Enter.
-    /// </summary>
-    /// <param name="message">The instruction message to display.</param>
-    public static void Pause(string message = "  Press Enter to continue...")
-    {
-        WriteLineColored(message, ConsoleColor.DarkGray);
-        Console.ReadLine();
+        try
+        {
+            return new EmployeeDTO(forNavn, efterNavn, new BirthDate(date), gender);
+        }
+        catch (ArgumentException ex)
+        {
+            Error(ex.Message);
+            return null;
+        }
     }
 }
