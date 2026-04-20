@@ -16,7 +16,7 @@ public sealed class User
     public string Name { get; set; } = string.Empty;
 
     /// <summary>Primary email address for the user.</summary>
-    public string Email { get; set; } = string.Empty;
+    public Email Email { get; set; } = Email.From(string.Empty);
 
     /// <summary>Hashed password and salt used to authenticate the user.</summary>
     public PasswordHash PasswordHash { get; set; } = PasswordHash.Empty;

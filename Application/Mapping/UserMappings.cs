@@ -10,5 +10,5 @@ public static class UserMappings
     /// <summary>Projects a <see cref="User"/> entity to a public <see cref="UserResponse"/> DTO.</summary>
     /// <param name="user">The source user.</param>
     public static UserResponse ToResponse(this User user) =>
-        new(user.Id, user.Name, user.Email, user.Role, user.Status);
+        new(user.Id, user.Name, user.Email.Value, user.Role, user.Status);
 }

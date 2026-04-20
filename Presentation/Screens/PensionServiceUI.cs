@@ -31,14 +31,17 @@ public sealed class PensionServiceUI : IScreen
             return Task.CompletedTask;
         }
 
-        var value = result.Value;
-        ConsoleHelper.WriteInfo($"Din alder              : {value.Age} år");
-        ConsoleHelper.WriteInfo($"År til pension (alder {PensionCalculator.PensionAge}): {value.YearsUntilPension} år");
+        var v = result.Value;
 
-        if (value.Warning is not null)
+        ConsoleHelper.WriteInfo($"Din alder              : {v.Age}");
+        ConsoleHelper.WriteInfo($"Folkepensionsalder     : {v.PensionAge}");
+        ConsoleHelper.WriteInfo($"Pensionsdato           : {v.PensionDate:dd-MM-yyyy}");
+        ConsoleHelper.WriteInfo($"Tid til pension        : {v.TimeUntilPension}");
+
+        if (v.Warning is not null)
         {
             Console.WriteLine();
-            ConsoleHelper.WriteWarning(value.Warning);
+            ConsoleHelper.WriteWarning(v.Warning);
         }
 
         Console.WriteLine();

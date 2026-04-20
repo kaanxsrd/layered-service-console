@@ -8,6 +8,7 @@ using Project.Application.Services.Modules;
 using Project.Application.Services.Pension;
 using Project.Application.Services.Text;
 using Project.Infrastructure.Auth;
+using Project.Infrastructure.Configuration;
 using Project.Infrastructure.Persistence;
 using Project.Infrastructure.Security;
 using Project.Infrastructure.Time;
@@ -29,6 +30,9 @@ services.AddLogging(builder =>
         })
         .SetMinimumLevel(LogLevel.Warning);
 });
+
+services.AddSingleton<IConfigurationService>(_ =>
+    new JsonConfigurationService(Path.Combine(AppContext.BaseDirectory, "appsettings.json")));
 
 services.AddSingleton<IClock,          SystemClock>();
 services.AddSingleton<IPasswordHasher, Pbkdf2PasswordHasher>();

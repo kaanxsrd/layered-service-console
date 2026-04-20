@@ -1,58 +1,54 @@
-// In-memory IUserRepository backed by ConcurrentDictionary; seeded with default accounts.
+// In-memory IUserRepository backed by ConcurrentDictionary; seeded from appsettings.json.
 using System.Collections.Concurrent;
 using Project.Application.Abstractions;
 using Project.Domain.Entities;
 using Project.Domain.Enums;
+using Project.Domain.ValueObjects;
 
 namespace Project.Infrastructure.Persistence;
 
 /// <summary>
-/// In-memory <see cref="IUserRepository"/> seeded with the built-in root/admin/user
-/// accounts. Intended as the default implementation until persistent storage arrives.
+/// In-memory <see cref="IUserRepository"/> whose seed users are loaded from the
+/// <c>Users</c> array in <c>appsettings.json</c>. Add, edit, or remove entries there
+/// to change who exists at startup without recompiling.
+/// Falls back to three built-in accounts when the config key is absent.
 /// </summary>
 public sealed class InMemoryUserRepository : IUserRepository
 {
-    private static readonly Guid RootId  = new("00000000-0000-0000-0000-000000000001");
-    private static readonly Guid AdminId = new("00000000-0000-0000-0000-000000000002");
-    private static readonly Guid UserId  = new("00000000-0000-0000-0000-000000000003");
+    private static readonly IReadOnlyList<UserSeedEntry> FallbackSeed =
+    [
+        new(new Guid("00000000-0000-0000-0000-000000000001"), "Root",  "root@system.local",  "root123",  Role.Root,  Status.Active),
+        new(new Guid("00000000-0000-0000-0000-000000000002"), "Admin", "admin@system.local", "admin123", Role.Admin, Status.Active),
+        new(new Guid("00000000-0000-0000-0000-000000000003"), "User",  "user@system.local",  "user123",  Role.User,  Status.Active),
+    ];
 
     private readonly ConcurrentDictionary<Guid, User> _users;
 
-    /// <summary>Creates a repository seeded with the built-in default accounts.</summary>
-    /// <param name="hasher">Password hasher used to hash seed passwords at startup.</param>
-    public InMemoryUserRepository(IPasswordHasher hasher)
+    /// <summary>Creates a repository seeded from <paramref name="config"/> or the built-in defaults.</summary>
+    public InMemoryUserRepository(IPasswordHasher hasher, IConfigurationService config)
     {
         ArgumentNullException.ThrowIfNull(hasher);
+        ArgumentNullException.ThrowIfNull(config);
 
         _users = new ConcurrentDictionary<Guid, User>();
 
-        Seed(new User
+        var seedResult = config.Get<List<UserSeedEntry>>("Users");
+        var entries    = seedResult.IsSuccess && seedResult.Value.Count > 0
+            ? seedResult.Value
+            : (IReadOnlyList<UserSeedEntry>)FallbackSeed;
+
+        foreach (var entry in entries)
         {
-            Id           = RootId,
-            Name         = "Root",
-            Email        = "root@system.local",
-            PasswordHash = hasher.Hash("root123"),
-            Role         = Role.Root,
-            Status       = Status.Active,
-        });
-        Seed(new User
-        {
-            Id           = AdminId,
-            Name         = "Admin",
-            Email        = "admin@system.local",
-            PasswordHash = hasher.Hash("admin123"),
-            Role         = Role.Admin,
-            Status       = Status.Active,
-        });
-        Seed(new User
-        {
-            Id           = UserId,
-            Name         = "User",
-            Email        = "user@system.local",
-            PasswordHash = hasher.Hash("user123"),
-            Role         = Role.User,
-            Status       = Status.Active,
-        });
+            _users[entry.Id] = new User
+            {
+                Id           = entry.Id,
+                Name         = entry.Name,
+                Email        = Email.From(entry.Email),
+                PasswordHash = hasher.Hash(entry.Password),
+                Role         = entry.Role,
+                Status       = entry.Status,
+            };
+        }
     }
 
     /// <inheritdoc />
@@ -62,8 +58,7 @@ public sealed class InMemoryUserRepository : IUserRepository
     /// <inheritdoc />
     public Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken)
     {
-        var match = _users.Values.FirstOrDefault(
-            u => u.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
+        var match = _users.Values.FirstOrDefault(u => u.Email.Equals(email));
         return Task.FromResult<User?>(match);
     }
 
@@ -90,8 +85,5 @@ public sealed class InMemoryUserRepository : IUserRepository
 
     /// <inheritdoc />
     public Task<bool> ExistsByEmailAsync(string email, CancellationToken cancellationToken) =>
-        Task.FromResult(_users.Values.Any(
-            u => u.Email.Equals(email, StringComparison.OrdinalIgnoreCase)));
-
-    private void Seed(User user) => _users[user.Id] = user;
+        Task.FromResult(_users.Values.Any(u => u.Email.Equals(email)));
 }

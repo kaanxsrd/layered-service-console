@@ -6,6 +6,7 @@ using Project.Application.Dtos.Auth;
 using Project.Application.Mapping;
 using Project.Domain.Entities;
 using Project.Domain.Enums;
+using Project.Domain.ValueObjects;
 
 namespace Project.Application.Services.Auth;
 
@@ -86,7 +87,7 @@ public sealed class AuthService : IAuthService
         {
             Id           = Guid.NewGuid(),
             Name         = request.Name,
-            Email        = request.Email,
+            Email        = Email.From(request.Email),
             PasswordHash = _hasher.Hash(request.Password),
             Role         = request.Role,
             Status       = Status.Active,
