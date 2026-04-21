@@ -7,69 +7,94 @@ using SchoolProject.UI;
 Console.OutputEncoding = System.Text.Encoding.UTF8;
 
 var employees = SeedData.GetEmployees();
+employees.Sort();
 var service = new EmployeeService();
 
-ConsoleHelper.Header("Medarbejder Pension Oversigt");
+bool running = true;
 
-// del 1 vis alle medarbejdere med alder
-ConsoleHelper.Section("Øvelse Del 1 – Medarbejderliste");
-ConsoleHelper.PrintDtoList(employees);
-
-// del 2 sorter listen alfabetisk efter efternavn og lad brugeren tilføje en ny
-ConsoleHelper.Section("Øvelse Del 2 – Sorteret efter efternavn");
-employees.Sort();
-ConsoleHelper.PrintDtoList(employees);
-
-ConsoleHelper.Section("Tilføj ny medarbejder");
-var newEmployee = ConsoleHelper.ReadEmployeeFromInput();
-
-if (newEmployee is not null)
+while (running)
 {
-    // tjek om medarbejderen allerede findes via IEquatable
-    if (employees.Any(e => e.Equals(newEmployee)))
+    Console.Clear();
+    ConsoleHelper.Header("Medarbejder Pension Oversigt");
+    ConsoleHelper.PrintMenu();
+
+    var choice = Console.ReadLine()?.Trim() ?? "";
+
+    switch (choice)
     {
-        ConsoleHelper.Error("Medarbejderen eksisterer allerede i listen.");
-    }
-    else
-    {
-        employees.Add(newEmployee);
-        employees.Sort();
-        ConsoleHelper.Success("Medarbejder tilføjet!");
-        ConsoleHelper.PrintDtoList(employees);
+        case "1":
+            Console.Clear();
+            ConsoleHelper.Header("Medarbejder Pension Oversigt");
+            ConsoleHelper.Section("Alle medarbejdere");
+            ConsoleHelper.PrintDtoList(employees);
+            ConsoleHelper.Pause();
+            break;
+
+        case "2":
+            Console.Clear();
+            ConsoleHelper.Header("Medarbejder Pension Oversigt");
+            ConsoleHelper.Section("Kvindelige medarbejdere");
+            var female = service.GetByGender(employees, Gender.F);
+            female.Sort();
+            ConsoleHelper.PrintRecordList(female);
+            ConsoleHelper.Pause();
+            break;
+
+        case "3":
+            Console.Clear();
+            ConsoleHelper.Header("Medarbejder Pension Oversigt");
+            ConsoleHelper.Section("Mandlige medarbejdere");
+            var male = service.GetByGender(employees, Gender.M);
+            male.Sort();
+            ConsoleHelper.PrintRecordList(male);
+            ConsoleHelper.Pause();
+            break;
+
+        case "4":
+            Console.Clear();
+            ConsoleHelper.Header("Medarbejder Pension Oversigt");
+            ConsoleHelper.Section("Medarbejdere med 5 eller færre år til pension");
+            var nearPension = service.GetNearingRetirement(employees);
+            nearPension.Sort();
+            ConsoleHelper.PrintNearRetirementList(nearPension);
+            ConsoleHelper.Pause();
+            break;
+
+        case "5":
+            Console.Clear();
+            ConsoleHelper.Header("Medarbejder Pension Oversigt");
+            ConsoleHelper.Section("Registrere ny medarbejder");
+            var newEmployee = ConsoleHelper.ReadEmployeeFromInput();
+            if (newEmployee is not null)
+            {
+                if (employees.Any(e => e.Equals(newEmployee)))
+                    ConsoleHelper.Error("Medarbejderen eksisterer allerede i listen.");
+                else
+                {
+                    employees.Add(newEmployee);
+                    employees.Sort();
+                    ConsoleHelper.Success("Medarbejder tilføjet!");
+                    ConsoleHelper.PrintDtoList(employees);
+                }
+            }
+            ConsoleHelper.Pause();
+            break;
+
+        case "6":
+            Console.Clear();
+            ConsoleHelper.Header("Medarbejder Pension Oversigt");
+            ConsoleHelper.Section("Løndata oversigt");
+            ConsoleHelper.PrintSalaryData();
+            ConsoleHelper.Pause();
+            break;
+
+        case "7":
+            running = false;
+            break;
+
+        default:
+            ConsoleHelper.Error("Ugyldigt valg – vælg venligst 1-7.");
+            ConsoleHelper.Pause();
+            break;
     }
 }
-
-// del 3 og 4 konverter til records og filtrer på køn og pensionsalder
-ConsoleHelper.Section("Øvelse Del 3 & 4 – Medarbejder Records");
-
-var femaleRecords = service.GetByGender(employees, Gender.F);
-var maleRecords   = service.GetByGender(employees, Gender.M);
-var nearPension   = service.GetNearingRetirement(employees);
-
-Console.WriteLine("  Kvindelige medarbejdere:");
-ConsoleHelper.PrintRecordList(femaleRecords);
-
-Console.WriteLine("\n  Mandlige medarbejdere:");
-ConsoleHelper.PrintRecordList(maleRecords);
-
-Console.WriteLine("\n  Medarbejdere inden for 5 år til pension (folkepensionsalder: 67):");
-ConsoleHelper.PrintRecordList(nearPension);
-
-// del 5 sorter alle record-lister alfabetisk efter efternavn
-ConsoleHelper.Section("Øvelse Del 5 – Records sorteret efter efternavn");
-
-femaleRecords.Sort();
-maleRecords.Sort();
-nearPension.Sort();
-
-Console.WriteLine("  Kvindelige medarbejdere (sorteret):");
-ConsoleHelper.PrintRecordList(femaleRecords);
-
-Console.WriteLine("\n  Mandlige medarbejdere (sorteret):");
-ConsoleHelper.PrintRecordList(maleRecords);
-
-Console.WriteLine("\n  Medarbejdere inden for 5 år til pension (sorteret):");
-ConsoleHelper.PrintRecordList(nearPension);
-
-Console.WriteLine("\n  Tryk på en tast for at afslutte...");
-Console.ReadKey(intercept: true);

@@ -7,7 +7,7 @@ namespace SchoolProject.Models;
 /// Bruges som return type / data-snapshot fra EmployeeService.
 /// IComparable implementeres for at tillade sortering efter efternavn.
 /// </summary>
-public record EmployeeRecord(string ForNavn, string EfterNavn, int Alder, Gender Køn)
+public record EmployeeRecord(string ForNavn, string EfterNavn, int Alder, Gender Køn, Department Afdeling)
     : IComparable<EmployeeRecord>
 {
     /// <summary>Sortering efter efternavn alfabetisk.</summary>

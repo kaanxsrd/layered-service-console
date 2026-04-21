@@ -13,13 +13,15 @@ public class EmployeeDTO : IComparable<EmployeeDTO>, IEquatable<EmployeeDTO>
     public string EfterNavn { get; set; }
     public BirthDate Fødselsdato { get; set; }
     public Gender Køn { get; set; }
+    public Department Afdeling { get; set; }
 
-    public EmployeeDTO(string forNavn, string efterNavn, BirthDate fødselsdato, Gender køn)
+    public EmployeeDTO(string forNavn, string efterNavn, BirthDate fødselsdato, Gender køn, Department afdeling)
     {
         ForNavn = forNavn;
         EfterNavn = efterNavn;
         Fødselsdato = fødselsdato;
         Køn = køn;
+        Afdeling = afdeling;
     }
 
     public int Age => Fødselsdato.Age;
@@ -45,7 +47,8 @@ public class EmployeeDTO : IComparable<EmployeeDTO>, IEquatable<EmployeeDTO>
         return string.Equals(ForNavn, other.ForNavn, StringComparison.OrdinalIgnoreCase)
             && string.Equals(EfterNavn, other.EfterNavn, StringComparison.OrdinalIgnoreCase)
             && Fødselsdato.Equals(other.Fødselsdato)
-            && Køn == other.Køn;
+            && Køn == other.Køn
+            && Afdeling == other.Afdeling;
     }
 
     public override bool Equals(object? obj) => Equals(obj as EmployeeDTO);
@@ -54,5 +57,6 @@ public class EmployeeDTO : IComparable<EmployeeDTO>, IEquatable<EmployeeDTO>
         ForNavn.ToLowerInvariant(),
         EfterNavn.ToLowerInvariant(),
         Fødselsdato,
-        Køn);
+        Køn,
+        Afdeling);
 }
