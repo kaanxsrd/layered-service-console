@@ -14,42 +14,17 @@ Nedenfor er tre UML-relaterede diagrammer for projektet.
 classDiagram
     direction LR
 
-    class Medarbejder {
-      +Fornavn
-      +Efternavn
-      +Foedselsdato
-      +Koen
-      +Afdeling
-      +Alder (afledt)
-    }
+    class Medarbejder {}
 
-    class Foedselsdato {
-      +Dato
-      +Alder (beregnet)
-    }
+    class Foedselsdato {}
 
-    class Koen {
-      M
-      F
-    }
+    class Koen {}
 
-    class Afdeling {
-      SoftwareDevelopment
-      Administration
-      ServiceAndSupport
-    }
+    class Afdeling {}
 
-    class Pension {
-      +Pensionsalder = 67
-      +AarTilPension
-      +Fratraedelsesbonus
-    }
+    class Pension { }
 
-    class Loendata {
-      +Gennemsnitsloen
-      +BonusFactor
-      +PensionBonus
-    }
+    class Loendata {}
 
     Medarbejder "1" *-- "1" Foedselsdato : har
     Medarbejder "1" --> "1" Koen : klassificeresSom
