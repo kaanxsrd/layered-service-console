@@ -21,7 +21,7 @@ public class EmployeeService
     {
         return employees
             .Where(e => e.Køn == gender)
-            .Select(e => new EmployeeRecord(e.ForNavn, e.EfterNavn, e.Age, e.Køn, e.Afdeling))
+            .Select(e => new EmployeeRecord(e.ForNavn, e.EfterNavn, e.Fødselsdato, e.Køn, e.Afdeling))
             .ToList();
     }
 
@@ -33,7 +33,7 @@ public class EmployeeService
     {
         return employees
             .Where(e => PensionAge - e.Age <= NearRetirementThreshold)
-            .Select(e => new EmployeeRecord(e.ForNavn, e.EfterNavn, e.Age, e.Køn, e.Afdeling))
+            .Select(e => new EmployeeRecord(e.ForNavn, e.EfterNavn, e.Fødselsdato, e.Køn, e.Afdeling))
             .ToList();
     }
 }

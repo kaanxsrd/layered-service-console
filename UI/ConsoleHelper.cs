@@ -43,7 +43,8 @@ internal static class ConsoleHelper
         Console.WriteLine("  4) Vis medarbejdere med 5 eller færre år til pension");
         Console.WriteLine("  5) Registrere ny medarbejder");
         Console.WriteLine("  6) Vis løndata oversigt");
-        Console.WriteLine("  7) Afslut");
+        Console.WriteLine("  7) Opdater løn matrix");
+        Console.WriteLine("  8) Afslut");
         Console.Write("\n  Dit valg: ");
     }
 
@@ -98,19 +99,75 @@ internal static class ConsoleHelper
 
     internal static void PrintSalaryData()
     {
-        var deptValues = Enum.GetValues<Department>();
         Console.WriteLine($"\n  {"Afdeling",-24} {"Gns. løn kvinde",16} {"Gns. løn mand",16} {"Bonus mand",16} {"Bonus kvinde",16}");
         Console.WriteLine($"  {new string('─', 92)}");
-        for (int i = 0; i < deptValues.Length; i++)
+        foreach (var dept in Enum.GetValues<Department>())
         {
-            string dept = FormatEnumName(deptValues[i].ToString());
-            decimal avgF   = SalaryData.Løndata[i, 0];
-            decimal avgM   = SalaryData.Løndata[i, 1];
-            decimal bonusM = SalaryData.Løndata[i, 2];
-            decimal bonusF = SalaryData.Løndata[i, 3];
-            Console.WriteLine($"  {dept,-24} {avgF,14:N0} kr {avgM,14:N0} kr {bonusM,14:N0} kr {bonusF,14:N0} kr");
+            string name    = FormatEnumName(dept.ToString());
+            decimal avgF   = SalaryData.GetAverageSalary(dept, Gender.F);
+            decimal avgM   = SalaryData.GetAverageSalary(dept, Gender.M);
+            decimal bonusM = SalaryData.GetPensionBonus(dept, Gender.M);
+            decimal bonusF = SalaryData.GetPensionBonus(dept, Gender.F);
+            Console.WriteLine($"  {name,-24} {avgF,14:N0} kr {avgM,14:N0} kr {bonusM,14:N0} kr {bonusF,14:N0} kr");
         }
         Console.WriteLine($"  {new string('─', 92)}");
+    }
+
+    internal static void UpdateSalaryMatrix()
+    {
+        var deptValues   = Enum.GetValues<Department>();
+        var genderValues = Enum.GetValues<Gender>();
+
+        // --- Vælg afdeling ---
+        Console.WriteLine("\n  Vælg afdeling:");
+        for (int i = 0; i < deptValues.Length; i++)
+            Console.WriteLine($"    {i + 1}) {FormatEnumName(deptValues[i].ToString())}");
+        Console.Write($"  Vælg (1-{deptValues.Length}): ");
+        var deptInput = Console.ReadLine()?.Trim() ?? "";
+
+        if (!int.TryParse(deptInput, out var deptIdx) || deptIdx < 1 || deptIdx > deptValues.Length)
+        {
+            Error("Ugyldig afdeling.");
+            return;
+        }
+        var dept = deptValues[deptIdx - 1];
+
+        // --- Vælg køn ---
+        Console.WriteLine("\n  Vælg køn:");
+        for (int i = 0; i < genderValues.Length; i++)
+            Console.WriteLine($"    {i + 1}) {genderValues[i]}");
+        Console.Write($"  Vælg (1-{genderValues.Length}): ");
+        var genderInput = Console.ReadLine()?.Trim() ?? "";
+
+        if (!int.TryParse(genderInput, out var genderIdx) || genderIdx < 1 || genderIdx > genderValues.Length)
+        {
+            Error("Ugyldigt køn.");
+            return;
+        }
+        var gender = genderValues[genderIdx - 1];
+
+        decimal currentSalary = SalaryData.GetAverageSalary(dept, gender);
+        Console.WriteLine($"\n  Nuværende gennemsnitsløn: {currentSalary:N0} kr");
+
+        // --- Ny løn ---
+        Console.Write("  Ny gennemsnitsløn (kr)  : ");
+        var salaryInput = Console.ReadLine()?.Trim() ?? "";
+
+        if (!decimal.TryParse(salaryInput,
+                System.Globalization.NumberStyles.Number,
+                System.Globalization.CultureInfo.CurrentCulture,
+                out var newSalary) || newSalary <= 0)
+        {
+            Error("Ugyldig løn – indtast et positivt tal.");
+            return;
+        }
+
+        // Opdater gennemsnitsløn; fratrædelsesbonus auto-genberegnes
+        SalaryData.UpdateAverageSalary(dept, gender, newSalary);
+
+        Success($"Gennemsnitsløn opdateret til {newSalary:N0} kr.");
+        Success("Fratrædelsesbonus auto-opdateret.");
+        PrintSalaryData();
     }
 
     internal static string FormatEnumName(string name) =>

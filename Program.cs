@@ -89,11 +89,19 @@ while (running)
             break;
 
         case "7":
+            Console.Clear();
+            ConsoleHelper.Header("Medarbejder Pension Oversigt");
+            ConsoleHelper.Section("Opdater løn matrix");
+            ConsoleHelper.UpdateSalaryMatrix();
+            ConsoleHelper.Pause();
+            break;
+
+        case "8":
             running = false;
             break;
 
         default:
-            ConsoleHelper.Error("Ugyldigt valg – vælg venligst 1-7.");
+            ConsoleHelper.Error("Ugyldigt valg – vælg venligst 1-8.");
             ConsoleHelper.Pause();
             break;
     }
