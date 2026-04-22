@@ -26,13 +26,6 @@ classDiagram
 
     class Loendata {}
 
-    Medarbejder "1" *-- "1" Foedselsdato : har
-    Medarbejder "1" --> "1" Koen : klassificeresSom
-    Medarbejder "1" --> "1" Afdeling : arbejderI
-    Medarbejder "1" --> "0..1" Pension : naermerSig
-    Loendata "1" --> "*" Afdeling : matrixPer
-    Loendata "1" --> "*" Koen : matrixPer
-    Pension ..> Loendata : beregnerBonusFra
 ```
 
 ## 2) Klassediagram
