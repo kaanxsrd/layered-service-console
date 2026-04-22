@@ -26,6 +26,14 @@ classDiagram
 
     class Loendata {}
 
+    Medarbejder "1" *-- "1" Foedselsdato
+    Medarbejder "1" --> "1" Koen
+    Medarbejder "1" --> "1" Afdeling
+    Medarbejder "1" --> "0..1" Pension
+    Loendata "1" --> "*" Afdeling
+    Loendata "1" --> "*" Koen 
+    Pension ..> Loendata 
+
 ```
 
 ## 2) Klassediagram
