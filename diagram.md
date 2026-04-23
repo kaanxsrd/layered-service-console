@@ -1,6 +1,8 @@
 # Del 4: Diagrammer
 
+<html>
 <iframe src="https://mermaid.sametcc.me/iframe?diagram=eJxLL0osyFDwCeJSUHCM9k1NSSxKSs1KSS2KVdDVtVNwjnY7vCOlODWn2CWxJD8WuyKn6IDUvOLM_DyQPIIDlnOJ9jm8Iw-oORGHZlewApAkklI0GSza3KId01JSczLz0rFpRZIFAK9vSpc" width="600" height="400"></iframe>
+</html>
 
 Nedenfor er tre UML-relaterede diagrammer for projektet.
 
