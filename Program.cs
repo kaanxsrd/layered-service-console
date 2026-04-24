@@ -1,7 +1,5 @@
-using SchoolProject.Data;
-using SchoolProject.Enums;
-using SchoolProject.Models;
-using SchoolProject.Services;
+using SchoolProject.Employee;
+using SchoolProject.Shared;
 using SchoolProject.UI;
 
 Console.OutputEncoding = System.Text.Encoding.UTF8;

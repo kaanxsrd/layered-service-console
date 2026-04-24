@@ -1,7 +1,7 @@
 using System.Text.RegularExpressions;
-using SchoolProject.Data;
-using SchoolProject.Enums;
-using SchoolProject.Models;
+using SchoolProject.Employee;
+using SchoolProject.Salary;
+using SchoolProject.Shared;
 
 namespace SchoolProject.UI;
 
@@ -162,7 +162,6 @@ internal static class ConsoleHelper
             return;
         }
 
-        // Opdater gennemsnitsløn; fratrædelsesbonus auto-genberegnes
         SalaryData.UpdateAverageSalary(dept, gender, newSalary);
 
         Success($"Gennemsnitsløn opdateret til {newSalary:N0} kr.");
