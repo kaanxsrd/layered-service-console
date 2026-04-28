@@ -20,6 +20,7 @@ public static class App
         {
             Console.Clear();
             ConsoleHelper.Header("Medarbejder Pension Oversigt");
+            ConsoleHelper.Header($"homedir: {HomeDirFinder.Find()}");
             ConsoleHelper.PrintMenu();
 
             var choice = Console.ReadLine()?.Trim() ?? "";
