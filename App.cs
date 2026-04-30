@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using SchoolProject.Employee;
 using SchoolProject.Shared;
 using SchoolProject.UI;
@@ -20,7 +21,8 @@ public static class App
         {
             Console.Clear();
             ConsoleHelper.Header("Medarbejder Pension Oversigt");
-            ConsoleHelper.Header($"homedir: {HomeDirFinder.Find()}");
+            var osName = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "Windows System" : "macOS System";
+            ConsoleHelper.Header($"homedir: {HomeDirFinder.Find()} ({osName})");
             ConsoleHelper.PrintMenu();
 
             var choice = Console.ReadLine()?.Trim() ?? "";
